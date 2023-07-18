@@ -1,4 +1,5 @@
 import asyncio
+# from playwright.async_api import async_playwright
 from playwright.async_api import async_playwright
 import json
 import os
@@ -19,7 +20,7 @@ available_urls = URLS.keys()
 
 
 def load_auth():
-    FILE = os.path.join("Scraper", "auth.json")
+    FILE = os.path.join("scraper", "auth.json")
     with open(FILE, "r") as f:
         return json.load(f)
 
@@ -74,7 +75,7 @@ async def get_products(page, search_text, selector, get_product):
 
 def save_results(results):
     data = {"results": results}
-    FILE = os.path.join("Scraper", "results.json")
+    FILE = os.path.join("scraper", "results.json")
     with open(FILE, "w") as f:
         json.dump(data, f)
 
@@ -99,7 +100,9 @@ async def main(url, search_text, response_route):
 
     async with async_playwright() as pw:
         print('Connecting to browser.')
-        browser = await pw.chromium.connect_over_cdp(browser_url)
+        # browser = await pw.chromium.connect_over_cdp(browser_url)
+        # page = await browser.new_page()
+        browser = await pw.firefox.launch()
         page = await browser.new_page()
         print("Connected.")
         await page.goto(url, timeout=120000)

@@ -1,5 +1,5 @@
 {
-  "host": "",
-  "username": "",
-  "password": ""
+  "host": "brd.superproxy.io:9222",
+  "username": "brd-customer-hl_3d18efc5-zone-scraping_browser",
+  "password": "u7981sz0qdk3"
 }
