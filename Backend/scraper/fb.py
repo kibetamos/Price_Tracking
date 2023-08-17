@@ -10,7 +10,8 @@ async def get_stock(product_div):
 async def get_product(product_div):
     # Query for all elements at once
     image_element_future = product_div.query_selector('img.s-image')
-    name_element_future = product_div.query_selector('h2 a span')
+    name_element_future = product_div.query_selector(
+        'h2 a span')
     price_element_future = product_div.query_selector('span.a-offscreen')
     url_element_future = product_div.query_selector(
         'a.a-link-normal.s-no-hover.s-underline-text.s-underline-link-text.s-link-style.a-text-normal')

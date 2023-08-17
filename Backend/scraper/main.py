@@ -8,6 +8,9 @@ from requests import post
 
 AMAZON = "https://amazon.ca"
 
+
+# AMAZON = "https://www.facebook.com"
+
 URLS = {
     AMAZON: {
         "search_field_query": 'input[name="field-keywords"]',

@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 
 const customModalStyles = {
   content: {
-    width: '90%', // Adjust the width as needed
+    width: '50%', // Adjust the width as needed
     margin: 'auto',
   },
 };
