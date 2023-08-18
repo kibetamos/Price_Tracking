@@ -10,6 +10,7 @@ function SearchTextList({ searchTexts, onSearchTextClick }) {
             <button>{searchText}</button>
           </li>
         ))}
+        
       </ul>
     </div>
   );
