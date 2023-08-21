@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link, useNavigate} from "react-router-dom";
-
-
+import styles from './Login.module.css';
+import styles from '../../Pages/Home/Home.module.css';
 
 
 
@@ -9,7 +9,7 @@ import {Link, useNavigate} from "react-router-dom";
 function SearchTextList({ searchTexts, onSearchTextClick }) {
   return (
     
-    <div>
+    <div class="dashboard_bar">
       <h2 >All Products</h2>
       <ul>
         {searchTexts.map((searchText, index) => (
