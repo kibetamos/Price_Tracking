@@ -18,7 +18,6 @@ Install all dependencies, create the `auth.json` file, start the flask backend, 
 ### auth.json
 
 Fill in your [Bright Data Scraping Browser](https://brightdata.com/products/scraping-browser) credentials in a `backend/scraper/auth.json` file (see `auth_example.json`).
-
 ### Python Flask Backend
 
 - `cd backend`
