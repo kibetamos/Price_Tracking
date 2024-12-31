@@ -38,4 +38,5 @@ To automate the collection of prices from this software simply run the `schedule
 
 ### Windows
 
+
 I have created a simple `.bat` script called `run.bat` that you can schedule to execute using the Windows Task Scheduler that will automatically run the backend api and send the appropriate request to it.
