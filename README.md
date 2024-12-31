@@ -11,6 +11,7 @@ This project uses:
 - Playwright
 - Bright Data (Web Scraping Browser)
 
+
 ## Using the Scraper
 
 Install all dependencies, create the `auth.json` file, start the flask backend, run the react frontend and interact with the tool.
