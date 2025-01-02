@@ -5,7 +5,6 @@ This project provides a user interface to interact with an automated price track
 
 ## Libraries/Frameworks/Modules
 
-
 This project uses:
 - React
 - Flask
