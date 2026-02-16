@@ -23,7 +23,7 @@ available_urls = URLS.keys()
 
 
 def load_auth():
-    FILE = os.path.join("scraper", "auth.json")
+    FILE = os.path.join("scraper", "auth1.json")
     with open(FILE, "r") as f:
         return json.load(f)
 
@@ -35,46 +35,109 @@ browser_url = f'wss://{auth}@{cred["host"]}'
 
 async def search(metadata, page, search_text):
     print(f"Searching for {search_text} on {page.url}")
-    search_field_query = metadata.get("search_field_query")
-    search_button_query = metadata.get("search_button_query")
 
-    if search_field_query and search_button_query:
-        print("Filling input field")
-        search_box = await page.wait_for_selector(search_field_query)
-        await search_box.type(search_text)
-        print("Pressing search button")
-        button = await page.wait_for_selector(search_button_query)
-        await button.click()
-    else:
+    search_field_query = metadata.get("search_field_query")
+
+    if not search_field_query:
         raise Exception("Could not search.")
 
-    await page.wait_for_load_state()
+    search_box = await page.wait_for_selector(search_field_query, timeout=15000)
+    await search_box.fill(search_text)
+
+    async with page.expect_navigation(wait_until="domcontentloaded"):
+        await search_box.press("Enter")
+
+    # Wait for actual search results
+    await page.wait_for_selector("div.s-result-item[data-component-type='s-search-result']", timeout=20000)
+
+    # Detect CAPTCHA
+    if "captcha" in page.url.lower():
+        print("⚠ Amazon CAPTCHA detected")
+
+    print("Search results loaded.")
     return page
+# async def search(metadata, page, search_text):
+#     print(f"Searching for {search_text} on {page.url}")
+#     search_field_query = metadata.get("search_field_query")
+#     search_button_query = metadata.get("search_button_query")
+
+#     if search_field_query and search_button_query:
+#         print("Filling input field")
+#         search_box = await page.wait_for_selector(search_field_query)
+#         await search_box.type(search_text)
+#         print("Pressing search button")
+#         button = await page.wait_for_selector(search_button_query)
+#         await button.click()
+#     else:
+#         raise Exception("Could not search.")
+
+#     await page.wait_for_load_state()
+#     return page
 
 
+# async def get_products(page, search_text, selector, get_product):
+#     print("Retreiving products.")
+#     product_divs = await page.query_selector_all(selector)
+#     valid_products = []
+#     words = search_text.split(" ")
+
+#     async with asyncio.TaskGroup() as tg:
+#         for div in product_divs:
+#             async def task(p_div):
+#                 product = await get_product(p_div)
+
+#                 if not product["price"] or not product["url"]:
+#                     return
+
+#                 for word in words:
+#                     if not product["name"] or word.lower() not in product["name"].lower():
+#                         break
+#                 else:
+#                     valid_products.append(product)
+#             tg.create_task(task(div))
+
+#     return valid_products
 async def get_products(page, search_text, selector, get_product):
-    print("Retreiving products.")
+    print("Retrieving products.")
     product_divs = await page.query_selector_all(selector)
+    words = search_text.lower().split()
+
+    async def process_div(div):
+        try:
+            product = await get_product(div)
+
+            if not product:
+                return None
+
+            if not product.get("price") or not product.get("url"):
+                return None
+
+            name = product.get("name")
+            if not name:
+                return None
+
+            name = name.lower()
+
+            if all(word in name for word in words):
+                return product
+
+            return None
+
+        except Exception as e:
+            print("Product extraction error:", e)
+            return None
+
+    tasks = [process_div(div) for div in product_divs]
+
+    # IMPORTANT: prevent one failure from killing everything
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+
     valid_products = []
-    words = search_text.split(" ")
-
-    async with asyncio.TaskGroup() as tg:
-        for div in product_divs:
-            async def task(p_div):
-                product = await get_product(p_div)
-
-                if not product["price"] or not product["url"]:
-                    return
-
-                for word in words:
-                    if not product["name"] or word.lower() not in product["name"].lower():
-                        break
-                else:
-                    valid_products.append(product)
-            tg.create_task(task(div))
+    for r in results:
+        if isinstance(r, dict):
+            valid_products.append(r)
 
     return valid_products
-
 
 def save_results(results):
     data = {"results": results}

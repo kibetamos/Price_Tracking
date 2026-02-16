@@ -9,7 +9,7 @@ import React from 'react';
 function SearchTextList({ searchTexts, onSearchTextClick }) {
   return (
     
-    <div class="dashboard_bar">
+    <div className="dashboard_bar">
       <h2 >All Products</h2>
       <ul>
         {searchTexts.map((searchText, index) => (
